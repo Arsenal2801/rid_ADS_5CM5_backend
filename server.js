@@ -1,28 +1,25 @@
-const express = require('express');
-const { getConnection } = require('./config/db');
-require('dotenv').config();
-
+const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
+const sequelize = require("./src/config/db"); // Importa la conexión a la base de datos
 
+// Middleware para parsear el cuerpo de las solicitudes JSON
 app.use(express.json());
 
-// Ruta de ejemplo para obtener datos
-app.get('/example', async (req, res) => {
-    let connection;
-    try {
-        connection = await getConnection();
-        const rows = await connection.query('select * from rights');
-        res.json(rows);
-    } catch (err) {
-        console.error('Error al consultar la base de datos: ', err);
-        res.status(500).send('Error en el servidor');
-    } finally {
-        if (connection) connection.end(); // Asegúrate de cerrar la conexión
-    }
-});
+// Aquí puedes importar y usar las rutas de tus controladores
+const usuarioRoutes = require("./src/routes/usuarios");
+app.use("/api/usuarios", usuarioRoutes);
+
+// Sincroniza la base de datos (opcional, para crear tablas si no existen)
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Database & tables created!");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
 
 app.listen(port, () => {
-    console.log(`Servidor escuchando en el puerto ${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
-
