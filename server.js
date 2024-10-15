@@ -7,8 +7,11 @@ const sequelize = require("./src/config/db"); // Importa la conexión a la base 
 app.use(express.json());
 
 // Aquí puedes importar y usar las rutas de tus controladores
-const usuarioRoutes = require("./src/routes/usuarios");
-app.use("/api/usuarios", usuarioRoutes);
+//const usuarioRoutes = require("./src/routes/usuarios");
+//app.use("/api/usuarios", usuarioRoutes);
+
+const authRoutes = require("./src/routes/auth_router");
+app.use("/api/users/auth", authRoutes);
 
 // Sincroniza la base de datos (opcional, para crear tablas si no existen)
 sequelize
