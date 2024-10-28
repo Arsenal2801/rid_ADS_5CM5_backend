@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Casos = require("./Casos");
 
-const AcompJudicial = sequelize.define(
-  "AcompJudicial",
+class AcompJudicial extends Model {}
+AcompJudicial.init(
   {
     id_acomp: {
       type: DataTypes.INTEGER,
@@ -12,21 +13,17 @@ const AcompJudicial = sequelize.define(
     id_caso: {
       type: DataTypes.INTEGER,
       references: {
-        model: "casos",
+        model: Casos,
         key: "id_caso",
       },
     },
-    descripcion: {
-      type: DataTypes.TEXT,
-    },
-    fecha: {
-      type: DataTypes.DATE,
-    },
-    resultado: {
-      type: DataTypes.TEXT,
-    },
+    descripcion: DataTypes.TEXT,
+    fecha: DataTypes.DATEONLY,
+    resultado: DataTypes.TEXT,
   },
   {
+    sequelize,
+    modelName: "AcompJudicial",
     tableName: "acomp_judicial",
     timestamps: false,
   }

@@ -1,8 +1,10 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Roles = require("./Roles");
+const CelulasTrabajo = require("./CelulasTrabajo");
 
-const Usuario = sequelize.define(
-  "Usuario",
+class Usuarios extends Model {}
+Usuarios.init(
   {
     id_usuario: {
       type: DataTypes.INTEGER,
@@ -15,8 +17,8 @@ const Usuario = sequelize.define(
     },
     curp: {
       type: DataTypes.STRING(18),
-      unique: true,
       allowNull: false,
+      unique: true,
     },
     rfc: {
       type: DataTypes.STRING(13),
@@ -27,44 +29,38 @@ const Usuario = sequelize.define(
       allowNull: false,
     },
     fecha_nacimiento: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
     contrasena: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    foto_perfil: {
-      type: DataTypes.STRING(255),
-    },
+    foto_perfil: DataTypes.STRING(255),
     id_rol: {
       type: DataTypes.INTEGER,
       references: {
-        model: "roles",
+        model: Roles,
         key: "id_rol",
       },
     },
-    cedula_profesional: {
-      type: DataTypes.STRING(20),
-    },
-    grado_estudios: {
-      type: DataTypes.STRING(100),
-    },
-    titulo_obtenido: {
-      type: DataTypes.STRING(100),
-    },
+    cedula_profesional: DataTypes.STRING(20),
+    grado_estudios: DataTypes.STRING(100),
+    titulo_obtenido: DataTypes.STRING(100),
     id_celula: {
       type: DataTypes.INTEGER,
       references: {
-        model: "celulas_trabajo",
+        model: CelulasTrabajo,
         key: "id_celula",
       },
     },
   },
   {
+    sequelize,
+    modelName: "Usuarios",
     tableName: "usuarios",
     timestamps: false,
   }
 );
 
-module.exports = Usuario;
+module.exports = Usuarios;

@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Casos = require("./Casos");
 
-const PlanAccion = sequelize.define(
-  "PlanAccion",
+class PlanAccion extends Model {}
+PlanAccion.init(
   {
     id_plan_accion: {
       type: DataTypes.INTEGER,
@@ -12,19 +13,19 @@ const PlanAccion = sequelize.define(
     id_caso: {
       type: DataTypes.INTEGER,
       references: {
-        model: "casos",
+        model: Casos,
         key: "id_caso",
       },
     },
     fecha_plan: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    objetivo_general: {
-      type: DataTypes.TEXT,
-    },
+    objetivo_general: DataTypes.TEXT,
   },
   {
+    sequelize,
+    modelName: "PlanAccion",
     tableName: "plan_accion",
     timestamps: false,
   }

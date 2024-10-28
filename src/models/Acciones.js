@@ -1,8 +1,11 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const PlanAccion = require("./PlanAccion");
+const Usuarios = require("./Usuarios");
+const Derechos = require("./Derechos");
 
-const Accion = sequelize.define(
-  "Accion",
+class Acciones extends Model {}
+Acciones.init(
   {
     id_accion: {
       type: DataTypes.INTEGER,
@@ -12,35 +15,33 @@ const Accion = sequelize.define(
     id_plan_accion: {
       type: DataTypes.INTEGER,
       references: {
-        model: "plan_accion",
+        model: PlanAccion,
         key: "id_plan_accion",
       },
     },
-    descripcion_accion: {
-      type: DataTypes.TEXT,
-    },
+    descripcion_accion: DataTypes.TEXT,
     responsable: {
       type: DataTypes.INTEGER,
       references: {
-        model: "usuarios",
+        model: Usuarios,
         key: "id_usuario",
       },
     },
-    fecha_ejecucion: {
-      type: DataTypes.DATE,
-    },
+    fecha_ejecucion: DataTypes.DATEONLY,
     id_derecho: {
       type: DataTypes.INTEGER,
       references: {
-        model: "derechos",
+        model: Derechos,
         key: "id_derecho",
       },
     },
   },
   {
+    sequelize,
+    modelName: "Acciones",
     tableName: "acciones",
     timestamps: false,
   }
 );
 
-module.exports = Accion;
+module.exports = Acciones;

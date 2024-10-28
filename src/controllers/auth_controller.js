@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Usuario = require("../models/users");
+const Usuario = require("../models/Usuarios");
 const { Op } = require("sequelize");
 
 // Función para obtener el prefijo según el rol
@@ -31,6 +31,7 @@ const registerUser = async (req, res) => {
     titulo_obtenido,
     id_celula,
   } = req.body;
+
   try {
     // Verifica si el CURP o RFC ya existe
     const existingUser = await Usuario.findOne({
@@ -40,6 +41,16 @@ const registerUser = async (req, res) => {
     });
     if (existingUser) {
       return res.status(400).json({ message: "CURP o RFC ya están en uso" });
+    }
+
+    // Verifica el conteo de miembros en la célula
+    const countMiembros = await Usuario.count({
+      where: { id_celula },
+    });
+    if (countMiembros >= 4) {
+      return res.status(400).json({
+        message: "No se pueden agregar más de 3 miembros a esta célula",
+      });
     }
 
     // Encripta la contraseña
@@ -122,4 +133,44 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile };
+// Obtener miembros de una celula de trabajo por ID
+const getMiembrosByCelulaId = async (req, res) => {
+  try {
+    const miembros = await Usuario.findAll({
+      where: { id_celula: req.params.id },
+    });
+
+    if (miembros.length > 0) {
+      // Mapear los miembros para eliminar la contraseña y convertir a objeto simple
+      const miembrosSinContrasena = miembros.map((miembro) => {
+        const { contrasena, ...miembroData } = miembro.get({ plain: true });
+        return miembroData;
+      });
+      res.json(miembrosSinContrasena);
+    } else {
+      res.status(404).json({ message: "No hay miembros en esta célula" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Contar miembros de una celula de trabajo por ID
+const getCountMiembrosByCelulaId = async (req, res) => {
+  try {
+    const count = await Usuario.count({
+      where: { id_celula: req.params.id },
+    });
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getUserProfile,
+  getMiembrosByCelulaId,
+  getCountMiembrosByCelulaId,
+};
