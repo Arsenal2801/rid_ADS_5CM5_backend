@@ -3,9 +3,9 @@ const {
   registerUser,
   loginUser,
   getUserProfile,
-} = require("../controllers/auth_controller"); // Asegúrate de que el nombre del archivo sea correcto
+} = require("../controllers/auth_controller");
 const { check, validationResult } = require("express-validator");
-const { verifyToken } = require("../middlewares/auth_middleware"); // Asegúrate de que el nombre del archivo sea correcto
+const { verifyToken } = require("../middlewares/auth_middleware");
 
 const router = express.Router();
 
@@ -24,11 +24,10 @@ router.post(
       .withMessage("Fecha de nacimiento debe ser una fecha válida"),
     check("contrasena", "La contraseña es obligatoria").not().isEmpty(),
     check("id_rol", "El ID de rol es obligatorio").not().isEmpty(),
-    // Agregar validaciones según sea necesario
+    check("id_celula", "El ID de célula es obligatorio").not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
-    console.log("body: ", req.body);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
