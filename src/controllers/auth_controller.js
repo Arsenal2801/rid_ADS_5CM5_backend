@@ -44,13 +44,15 @@ const registerUser = async (req, res) => {
     }
 
     // Verifica el conteo de miembros en la célula
-    const countMiembros = await Usuario.count({
-      where: { id_celula },
-    });
-    if (countMiembros >= 4) {
-      return res.status(400).json({
-        message: "No se pueden agregar más de 3 miembros a esta célula",
+    if (id_celula != null) {
+      const countMiembros = await Usuario.count({
+        where: { id_celula },
       });
+      if (countMiembros >= 4) {
+        return res.status(400).json({
+          message: "No se pueden agregar más de 3 miembros a esta célula",
+        });
+      }
     }
 
     // Encripta la contraseña
@@ -85,7 +87,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Iniciar sesión utilizando id_usuario y contraseña
 const loginUser = async (req, res) => {
   const { id_usuario, contrasena } = req.body;
 
@@ -109,7 +110,14 @@ const loginUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ message: "Inicio de sesión exitoso", token });
+    // Obtener las dos primeras letras del id_usuario
+    const primerosCaracteres = user.id_usuario.substring(0, 2);
+
+    res.status(200).json({
+      message: "Inicio de sesión exitoso",
+      token,
+      type_user: primerosCaracteres,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
