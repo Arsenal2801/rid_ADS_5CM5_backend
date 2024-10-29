@@ -24,7 +24,6 @@ router.post(
       .withMessage("Fecha de nacimiento debe ser una fecha válida"),
     check("contrasena", "La contraseña es obligatoria").not().isEmpty(),
     check("id_rol", "El ID de rol es obligatorio").not().isEmpty(),
-    check("id_celula", "El ID de célula es obligatorio").not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
